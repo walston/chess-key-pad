@@ -1,16 +1,19 @@
 #! /usr/local/bin/node
-
 const _ = require('underscore')
 const write = process.stdout.write.bind(process.stdout)
 const pieces = ["pawn", "rook", "bishop", "knight", "queen", "king"]
-const width = 3
-const height = 4
 const keys = ["1","2","3","4","5","6","7","8","9","*","0","#"]
-const illegalTiles = [9, 11]
-const getMoves = require('./getMoves')(width,height,keys,illegalTiles)
-const args = process.argv
-const piece = args[2]
-const start = args[3]
+const illegalPlacement = [9, 11]
+const getPhoneNumbers = require('./getPhoneNumbers')({
+  width: 3,
+  height: 4,
+  pieces,
+  keys,
+  illegalPlacement
+})
+
+const piece = process.argv[2]
+const start = process.argv[3]
 
 if (!piece || !start) {
   write("Both a `piece' and a `start' are required.\n")
@@ -29,45 +32,12 @@ if (!_.contains(validStarts, start)) {
   process.exit(1)
 }
 
-let startIndex = _.findIndex(keys, (key) => key === start)
 write("1 2 3\n4 5 6\n7 8 9\n* 0 #\n")
 write("Starting from key `"+ start +"'...\n")
 
-let numbers = getPhoneNumbersFor(piece, start)
+let numbers = getPhoneNumbers(piece, start)
 let formatted = numbers.map(k =>
   `(${k.slice(0,3)})${k.slice(3,6)}-${k.slice(6)}`
 )
-write("possibilities: " + formatted.join('\n'))
+write("possibilities: " + formatted.length + "\n")
 write("\n")
-
-function getPhoneNumbersFor(piece, startKey) {
-  var possibilities = [startKey]; // string value of startkey
-
-  // while at least 1 possibility && it has length less than 10
-  while (possibilities[0] && possibilities[0].length < 10) {
-    // _.reduce(list, callback, memoInit)
-    // callbackSignature(memo, currentValue [, index, list])
-    let newPossibilities = _.reduce(possibilities, (acc, curr) => {
-      // return the list without this item if currentValue starts with 1 or 0
-      if (curr[0] === "1" || curr[0] === "0") {
-        return acc;
-      }
-
-      // variable for keymap index of last
-      let lastKeyIndex = _.findIndex(keys, key => key == curr.slice(-1))
-      // get moves for this key
-      let nextTiles = getMoves(piece, lastKeyIndex)
-
-      // if no moves are available ...
-      if (!nextTiles.length) {
-        return acc
-      }
-      else {
-        // otherwise, add on all the available moves tacked onto the end of curr
-        return acc.concat(nextTiles.map( next => curr + next))
-      }
-    }, [])
-    possibilities = newPossibilities
-  }
-  return possibilities;
-}

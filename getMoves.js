@@ -1,10 +1,16 @@
 const _ = require('underscore');
-const getMovesMemo = {} ;
+const getMovesMemo = {
+  _counter: 0,
+  counter: 0,
+  reset: () => this.counter = 0,
+  tick: () => {this._counter++; return this.counter++}
+} ;
 
 function getMoves(piece, start) {
   let signature = `${piece}_i=${start}`
 
   if (getMovesMemo[signature]) {
+    if (getMovesMemo.tick() > 100) debugger;
     return getMovesMemo[signature];
   }
 
