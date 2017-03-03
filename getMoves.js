@@ -39,22 +39,13 @@ function pawnMovements(start, w, h) {
 }
 
 function rookMovements(start, w, h) {
-  return _.uniq([]
-    .concat(
-      _.range(h).map(function(tr) {
-        let p = start % w;
-        return tr * w + p
-      })
-    )
-    .concat(
-      _.range(w).map(function(td) {
-        let tr = Math.floor(start/w);
-        return tr*w + td
-      })
-    )
+  let startcol = start % w;
+  let vertical = _.range(startcol,w*(h-1)+startcol,w)
+  let startrow = (start / w) | 0
+  let horizontal = _.range(startrow*w,startrow*w+(w-1))
+  return _.union(vertical, horizontal)
     .filter(n=>n!==start)
     .sort((a,b)=>a>b)
-  )
 }
 
 function knightMovements(start, w, h) {
