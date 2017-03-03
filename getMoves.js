@@ -1,12 +1,14 @@
 const _ = require('underscore');
 const getMovesMemo = {} ;
 
-function getMoves(piece, start, mapping, illegalTiles) {
-  if (getMovesMemo[piece+start])
-    return getMovesMemo[piece+start];
+function getMoves(piece, start) {
+  let signature = `${piece}_i=${start}`
+
+  if (getMovesMemo[signature]) {
+    return getMovesMemo[signature];
+  }
 
   let value;
-  let illegalMoves = [9, 11];
   switch (piece) {
     case 'pawn':   value = pawnMovements(start, w, h); break;
     case 'rook':   value = rookMovements(start, w, h); break;
@@ -16,13 +18,16 @@ function getMoves(piece, start, mapping, illegalTiles) {
     case 'king':   value = kingMovements(start, w, h); break;
     default: value = [];
   }
-  value = _.difference(value, illegalMoves);
+
+  if (illegalTiles) {
+    value = _.difference(value, illegalTiles);
+  }
 
   if (mapping) {
     value = value.map(n => mapping[n]);
   }
 
-  getMovesMemo[piece+start] = value;
+  getMovesMemo[signature] = value;
   return value;
 }
 
@@ -148,8 +153,10 @@ function kingMovements(start, w, h) {
   });
 }
 
-module.exports = function (width, height, mapping) {
+module.exports = function (width, height, m, illegal) {
   w = width;
   h = height;
+  mapping = m;
+  illegalTiles = illegal
   return getMoves;
 }
