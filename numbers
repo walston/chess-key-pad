@@ -25,10 +25,11 @@ if (!_.contains(pieces, piece)) {
   process.exit(1)
 }
 
-let validStarts = keys.filter((key, index) => !_.contains(illegalTiles, index))
+let validKeys = keys.filter((key, index) => !_.contains(illegalTiles, index))
+let isInputValid = _.map(start.split(''), digit => _.contains(validKeys, digit))
 
-if (!_.contains(validStarts, start)) {
-  write("Start tile must be of numbers: " + validStarts.join(', ') + "\n")
+if (_.contains(isInputValid, false)) {
+  write("Start tile must be of numbers: " + validKeys.join(', ') + "\n")
   process.exit(1)
 }
 
@@ -39,5 +40,5 @@ let numbers = getPhoneNumbers(piece, start)
 let formatted = numbers.map(k =>
   `(${k.slice(0,3)})${k.slice(3,6)}-${k.slice(6)}`
 )
-write("possibilities: " + formatted.length + "\n")
+write("possibilities:\n" + formatted.join('\n') + "\n")
 write("\n")

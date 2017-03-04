@@ -4,10 +4,11 @@ module.exports = function (options) {
   const { width, height, keys, illegalPlacement, pieces } = options
   const getMoves = require('./getMoves')(width,height,keys,illegalPlacement)
 
-  return function (piece, startKey) {
-    if (startKey == "0" || startKey == "1") return []
+  return function (piece, initString) {
+    if (typeof initString !== 'string') return [];
+    if (initString[0] == "0" || initString[0] == "1") return []
 
-    let collection = [startKey]
+    let collection = [initString]
 
     while (collection[0] && collection[0].length < 10) {
 
