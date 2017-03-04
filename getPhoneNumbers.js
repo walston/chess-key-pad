@@ -8,6 +8,7 @@ module.exports = function (options) {
     if (typeof initString !== 'string') return [];
     if (initString[0] == "0" || initString[0] == "1") return []
 
+    const unfold = keys.map( (k,i) => getMoves(piece,i))
     let collection = [initString]
 
     while (collection[0] && collection[0].length < 10) {
@@ -18,7 +19,7 @@ module.exports = function (options) {
 
         let curr = collection[i]
         let iof = keys.findIndex( key => key == curr.slice(-1) )
-        let next = getMoves(piece, iof)
+        let next = unfold[iof]
 
         if (next.length > 0) {
           acc = acc.concat(next.map( n => curr + n ))
