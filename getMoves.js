@@ -10,8 +10,11 @@ function getMoves(piece, start) {
   let signature = `${piece}_i=${start}`
 
   if (getMovesMemo[signature]) {
-    if (getMovesMemo.tick() > 100) debugger;
     return getMovesMemo[signature];
+  }
+
+  if (illegalTiles && _.contains(illegalTiles, start)) {
+    return []
   }
 
   let value;
