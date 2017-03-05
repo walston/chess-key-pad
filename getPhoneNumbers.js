@@ -16,8 +16,6 @@ module.exports = function (options) {
 
     let expansion = unfolds[piece][initString.slice(-1)].map( k => expand(piece, initString + k) )
 
-    debugger;
-
     return expansion.reduce( (acc, keys) => acc.concat(keys), [] )
   }
 }
