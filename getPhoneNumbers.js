@@ -15,7 +15,16 @@ module.exports = function (options) {
     if (digits.length >= length) return digits
 
     let lastTile = keys.indexOf(digits.slice(-1))
-    let expansion = unfolds[piece][lastTile].map( k => expand(piece, digits + k) )
+    let expansion = []
+
+    // promote a pawn!
+    if (piece == 'pawn' && lastTile == 10) {
+      piece = 'queen'
+      expansion = getMoves(piece, lastTile).map( k => expand(piece, digits + k) )
+    }
+    else {
+      expansion = unfolds[piece][lastTile].map( k => expand(piece, digits + k) )
+    }
 
     return expansion.reduce( (acc, digits) => acc.concat(digits), [] )
   }
