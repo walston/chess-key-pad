@@ -52,7 +52,6 @@ function rookMovements(start, w, h) {
   let vertical = _.range( startcol , startcol + (w * h), w)
   let startrow = (start / w) | 0
   let horizontal = _.range( startrow * w, (startrow * w) + w, 1)
-  debugger;
   return _.union(vertical, horizontal)
     .filter(n=>n!==start)
     .sort((a,b)=>a>b)
