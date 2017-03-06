@@ -49,9 +49,10 @@ function pawnMovements(start, w, h) {
 
 function rookMovements(start, w, h) {
   let startcol = start % w;
-  let vertical = _.range(startcol,w*(h-1)+startcol,w)
+  let vertical = _.range( startcol , startcol + (w * h), w)
   let startrow = (start / w) | 0
-  let horizontal = _.range(startrow*w,startrow*w+(w-1))
+  let horizontal = _.range( startrow * w, (startrow * w) + w, 1)
+  debugger;
   return _.union(vertical, horizontal)
     .filter(n=>n!==start)
     .sort((a,b)=>a>b)
