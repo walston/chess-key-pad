@@ -24,7 +24,7 @@ describe('3 x 4 phone pad', () => {
     ]
 
     expected.forEach((expectation, index) => {
-      it(`Pawn from key "${keys[index]}" should return ${expectation}:`, () => {
+      it(`Pawn from key "${keys[index]}" should return [${expectation}]`, () => {
         assert.sameMembers(moves[index], expectation)
       })
     })
@@ -47,7 +47,7 @@ describe('3 x 4 phone pad', () => {
       [] // "#"
     ]
     expected.forEach((expectation, index) => {
-      it(`Rook from key "${keys[index]}" should return ${expectation}:`, () => {
+      it(`Rook from key "${keys[index]}" should return [${expectation}]`, () => {
         assert.sameMembers(moves[index], expectation)
       })
     })
@@ -70,7 +70,7 @@ describe('3 x 4 phone pad', () => {
       [] // "#"
     ]
     expected.forEach((expectation, index) => {
-      it(`Bishop from key "${keys[index]}" should return ${expectation}:`, () => {
+      it(`Bishop from key "${keys[index]}" should return [${expectation}]`, () => {
         assert.sameMembers(moves[index], expectation)
       })
     })
@@ -93,7 +93,7 @@ describe('3 x 4 phone pad', () => {
       [] // "#"
     ]
     expected.forEach((expectation, index) => {
-      it(`Knight from key "${keys[index]}" should return ${expectation}:`, () => {
+      it(`Knight from key "${keys[index]}" should return [${expectation}]`, () => {
         assert.sameMembers(moves[index], expectation)
       })
     })
@@ -116,7 +116,7 @@ describe('3 x 4 phone pad', () => {
       [] // "#"
     ]
     expected.forEach((expectation, index) => {
-      it(`Queen from key "${keys[index]}" should return ${expectation}:`, () => {
+      it(`Queen from key "${keys[index]}" should return [${expectation}]`, () => {
         assert.sameMembers(moves[index], expectation)
       })
     })
@@ -140,7 +140,7 @@ describe('3 x 4 phone pad', () => {
     ]
 
     expected.forEach((expectation, index) => {
-      it(`King from key "${keys[index]}" should return ${expectation}:`, () => {
+      it(`King from key "${keys[index]}" should return [${expectation}]`, () => {
         assert.sameMembers(moves[index], expectation)
       })
     })
