@@ -7,16 +7,16 @@ module.exports = function (options) {
 
   return expand;
 
-  function expand(piece, initString) {
-    if (!initString.slice) return []
-    if (initString[0] == "0" || initString[0] == "1") return []
+  function expand(piece, digits) {
+    if (!digits.slice) return []
+    if (digits[0] == "0" || digits[0] == "1") return []
     if (!unfolds[piece]) unfolds[piece] = keys.map((k,i) => getMoves(piece,i))
 
-    if (initString.length >= length) return initString
+    if (digits.length >= length) return digits
 
-    let lastTile = keys.indexOf(initString.slice(-1))
-    let expansion = unfolds[piece][lastTile].map( k => expand(piece, initString + k) )
+    let lastTile = keys.indexOf(digits.slice(-1))
+    let expansion = unfolds[piece][lastTile].map( k => expand(piece, digits + k) )
 
-    return expansion.reduce( (acc, keys) => acc.concat(keys), [] )
+    return expansion.reduce( (acc, digits) => acc.concat(digits), [] )
   }
 }
