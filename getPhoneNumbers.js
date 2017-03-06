@@ -14,7 +14,8 @@ module.exports = function (options) {
 
     if (initString.length >= length) return initString
 
-    let expansion = unfolds[piece][initString.slice(-1)].map( k => expand(piece, initString + k) )
+    let lastTile = keys.indexOf(initString.slice(-1))
+    let expansion = unfolds[piece][lastTile].map( k => expand(piece, initString + k) )
 
     return expansion.reduce( (acc, keys) => acc.concat(keys), [] )
   }
