@@ -3,8 +3,14 @@ const _ = require('underscore')
 module.exports = function (options) {
   const { width, height, length, keys, illegalPlacement, pieces } = options
   const getMoves = require('./getMoves')(width,height,keys,illegalPlacement)
-  const unfolds = {}
-
+  const unfolds = pieces.reduce( (dictionary, p) => {
+    dictionary[p] = keys.reduce( (moves, k, i) => {
+      moves[k] = getMoves(p, i)
+      return moves
+    }, {})
+    return dictionary
+  }, {})
+  
   return expand;
 
   function expand(piece, digits) {
