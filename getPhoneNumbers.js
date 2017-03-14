@@ -1,37 +1,33 @@
-const _ = require('underscore')
-
 module.exports = function (options) {
   const { width, height, length, keys, illegalPlacement, pieces } = options
   const getMoves = require('./getMoves')(width,height,keys,illegalPlacement)
-  const unfolds = pieces.reduce( (dictionary, p) => {
-    dictionary[p] = keys.reduce( (moves, k, i) => {
-      moves[k] = getMoves(p, i)
-      return moves
+  const unfolds = pieces.reduce( (u, piece) => {
+    u[piece] = keys.reduce( (p, key, index) => {
+      p[key] = getMoves(piece, index)
+      return p
     }, {})
-    return dictionary
+    return u
   }, {})
-  
-  return expand;
 
-  function expand(piece, digits) {
-    if (!digits.slice) return []
-    if (digits[0] == "0" || digits[0] == "1") return []
-    if (!unfolds[piece]) unfolds[piece] = keys.map((k,i) => getMoves(piece,i))
-
-    if (digits.length >= length) return digits
-
-    let lastTile = keys.indexOf(digits.slice(-1))
-    let expansion = []
-
-    // promote a pawn!
-    if (piece == 'pawn' && lastTile == 10) {
-      piece = 'queen'
-      expansion = getMoves(piece, lastTile).map( k => expand(piece, digits + k) )
-    }
-    else {
-      expansion = unfolds[piece][lastTile].map( k => expand(piece, digits + k) )
+  return function numbers(piece, seed) {
+    this.print = function print(printer) {
+      iterate(seed, length, unfolds, piece, printer)
     }
 
-    return expansion.reduce( (acc, digits) => acc.concat(digits), [] )
+    return this
+  }
+}
+
+
+
+function iterate(seed, cutoff, unfolds, piece, printer) {
+  if (seed.length === cutoff) {
+    printer(seed.slice(0, cutoff))
+  }
+  else {
+    let char = seed[seed.length - 1]
+    unfolds[piece][char].forEach( k => {
+      iterate(seed + k, cutoff, unfolds, piece, printer)
+    })
   }
 }
