@@ -1,10 +1,8 @@
-const _ = require('underscore');
 const getMovesMemo = {
-  _counter: 0,
   counter: 0,
   reset: () => this.counter = 0,
-  tick: () => {this._counter++; return this.counter++}
-} ;
+  tick: () => {return this.counter++}
+};
 
 function getMoves(piece, start) {
   let signature = `${piece}_i=${start}`
@@ -13,7 +11,7 @@ function getMoves(piece, start) {
     return getMovesMemo[signature];
   }
 
-  if (illegalTiles && _.contains(illegalTiles, start)) {
+  if (illegalTiles && illegalTiles.includes(start)) {
     return []
   }
 
@@ -29,7 +27,9 @@ function getMoves(piece, start) {
   }
 
   if (illegalTiles) {
-    value = _.difference(value, illegalTiles);
+    value = value.reduce( (fresh, k) => {
+      return (illegalTiles.includes(k) ? fresh : fresh.concat(k))
+    }, []);
   }
 
   if (mapping) {
@@ -48,11 +48,20 @@ function pawnMovements(start, w, h) {
 }
 
 function rookMovements(start, w, h) {
-  let startcol = start % w;
-  let vertical = _.range( startcol , startcol + (w * h), w)
+  let startcol = start % w
   let startrow = (start / w) | 0
-  let horizontal = _.range( startrow * w, (startrow * w) + w, 1)
-  return _.union(vertical, horizontal)
+
+  let vertical = [];
+  for (let wi = startcol; wi < startcol + (w * h); wi += w) {
+    vertical.push(wi)
+  }
+
+  let horizontal = [];
+  for (let hi = startrow * w; hi < (startrow * w) + w; hi++) {
+    horizontal.push(hi)
+  }
+
+  return vertical.concat(horizontal)
     .filter(n=>n!==start)
     .sort((a,b)=>a>b)
 }
@@ -102,22 +111,28 @@ function knightMovements(start, w, h) {
     delete potential.SWW;
     delete potential.SEE;
   }
-  return _.values(potential).sort((a,b)=>a>b);
+
+  let v = []
+  for (let key in potential) {
+    v.push(potential[key])
+  }
+  return v;
 }
 
 function bishopMovements(start, w, h) {
   let startcol = start % w;
-  let westward = _.range(w).map(n=> start + (n-startcol) * (w+1) );
-  let eastward = _.range(w).map(n=> start - (n-startcol) * (w-1) );
+  let range = (new Array(w)).fill(null).map( (n,i) => i)
+  let westward = range.map(n=> start + (n-startcol) * (w+1) );
+  let eastward = range.map(n=> start - (n-startcol) * (w-1) );
 
-  return _.union(westward, eastward)
+  return westward.concat(eastward)
     .filter(n => n >= 0 && n < w*h)
     .filter(n => n !== start)
     .sort((a,b) => a > b)
 }
 
 function queenMovements(start, w, h) {
-  return _.union(
+  return [].concat(
     rookMovements(start, w, h),
     bishopMovements(start, w, h)
   )
@@ -138,7 +153,7 @@ function kingMovements(start, w, h) {
     start + w + 1
   ];
 
-  return _.filter(potential, function(n) {
+  return potential.filter(function(n) {
     let nr = (n / w) | 0;
     let nc = n % w;
     return true
