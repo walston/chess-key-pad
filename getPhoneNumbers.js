@@ -1,3 +1,5 @@
+const { writeSnapshot: snapshot } = require('heapdump')
+
 module.exports = function (options) {
   const { width, height, length, keys, illegalPlacement, pieces } = options
   const getMoves = require('./getMoves')(width,height,keys,illegalPlacement)
@@ -16,6 +18,7 @@ module.exports = function (options) {
 }
 
 function iterate(seed, cutoff, piece, unfolds, print) {
+  var counter = 0;
   if (cutoff < seed.length) {
     return seed.slice(0, cutoff)
   }
@@ -24,7 +27,7 @@ function iterate(seed, cutoff, piece, unfolds, print) {
   let branches = new Array(cutoff - trunk.length)
   let budding = 0
   branches[budding] = {
-    leafs: unfolds[piece][trunk.slice(-1)].slice(),
+    leafs: unfolds[piece][trunk.slice(-1)],
     index: 0
   }
 
@@ -38,7 +41,7 @@ function iterate(seed, cutoff, piece, unfolds, print) {
         let bud = branches[i-1].leafs[branches[i-1].index]
 
         branches[i] = {
-          leafs: unfolds[piece][bud].slice(),
+          leafs: unfolds[piece][bud],
           index: 0
         }
       }
@@ -49,6 +52,7 @@ function iterate(seed, cutoff, piece, unfolds, print) {
       return trunk + branch.leafs[branch.index]
     }, trunk)
     print(tree)
+    delete tree;
 
     // "prune" the array
       // add 1 to last index;
@@ -66,5 +70,7 @@ function iterate(seed, cutoff, piece, unfolds, print) {
         branches[i] = null
       }
     }
+    if (counter++ % 250000 == 0) { snapshot() }
+    if (counter % 1000000 == 0) { process.exit(1) }
   }
 }

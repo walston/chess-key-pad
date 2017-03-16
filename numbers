@@ -21,15 +21,15 @@ if (!piece || !start) {
   process.exit(1)
 }
 
-if (!_.contains(pieces, piece)) {
+if (!pieces.includes(piece)) {
   write("Piece must be of type: " + pieces.join(', ') + "\n")
   process.exit(1)
 }
 
-let validKeys = keys.filter((key, index) => !_.contains(illegalTiles, index))
-let isInputValid = _.map(start.split(''), digit => _.contains(validKeys, digit))
+let validKeys = keys.filter((key, index) => !illegalPlacement.includes(index))
+let isInputValid = start.split('').map(digit => validKeys.includes(digit))
 
-if (_.contains(isInputValid, false)) {
+if (isInputValid.includes(false)) {
   write("Start tile must be of numbers: " + validKeys.join(', ') + "\n")
   process.exit(1)
 }
@@ -40,5 +40,5 @@ write("Starting from key `"+ start +"'...\n")
 getPhoneNumbers(piece, start, format)
 
 function format(k) {
-  write(`(${k.slice(0,3)}) ${k.slice(3,6)}–${k.slice(6)}\n`)
+  console.log(`(${k.slice(0,3)}) ${k.slice(3,6)}–${k.slice(6)}`)
 }
