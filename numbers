@@ -1,45 +1,47 @@
 #! /usr/local/bin/node
-const _ = require('underscore')
-const write = process.stdout.write.bind(process.stdout)
-const pieces = ["pawn", "rook", "bishop", "knight", "queen", "king"]
-const keys = ["1","2","3","4","5","6","7","8","9","*","0","#"]
-const illegalPlacement = [9, 11]
-const getPhoneNumbers = require('./getPhoneNumbers')({
+const _ = require("underscore");
+const write = process.stdout.write.bind(process.stdout);
+const pieces = ["pawn", "rook", "bishop", "knight", "queen", "king"];
+const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"];
+const illegalPlacement = [9, 11];
+const getPhoneNumbers = require("./getPhoneNumbers")({
   width: 3,
   height: 4,
   length: 10,
   pieces,
   keys,
   illegalPlacement
-})
+});
 
-const piece = process.argv[2]
-const start = process.argv[3]
+const piece = process.argv[2];
+const start = process.argv[3];
 
 if (!piece || !start) {
-  write("Both a `piece' and a `start' are required.\n")
-  process.exit(1)
+  write("Both a `piece' and a `start' are required.\n");
+  process.exit(1);
 }
 
 if (!_.contains(pieces, piece)) {
-  write("Piece must be of type: " + pieces.join(', ') + "\n")
-  process.exit(1)
+  write("Piece must be of type: " + pieces.join(", ") + "\n");
+  process.exit(1);
 }
 
-let validKeys = keys.filter((key, index) => !_.contains(illegalTiles, index))
-let isInputValid = _.map(start.split(''), digit => _.contains(validKeys, digit))
+let validKeys = keys.filter((key, index) => !_.contains(illegalTiles, index));
+let isInputValid = _.map(start.split(""), digit =>
+  _.contains(validKeys, digit)
+);
 
 if (_.contains(isInputValid, false)) {
-  write("Start tile must be of numbers: " + validKeys.join(', ') + "\n")
-  process.exit(1)
+  write("Start tile must be of numbers: " + validKeys.join(", ") + "\n");
+  process.exit(1);
 }
 
-write("1 2 3\n4 5 6\n7 8 9\n* 0 #\n")
-write("Starting from key `"+ start +"'...\n")
+write("1 2 3\n4 5 6\n7 8 9\n* 0 #\n");
+write("Starting from key `" + start + "'...\n");
 
-let numbers = getPhoneNumbers(piece, start)
-let formatted = numbers.map(k =>
-  `(${k.slice(0,3)})${k.slice(3,6)}-${k.slice(6)}`
-)
-write("possibilities:\n" + formatted.join('\n') + "\n")
-write("\n")
+let numbers = getPhoneNumbers(piece, start);
+let formatted = numbers.map(
+  k => `(${k.slice(0, 3)})${k.slice(3, 6)}-${k.slice(6)}`
+);
+write("possibilities:\n" + formatted.join("\n") + "\n");
+write("\n");

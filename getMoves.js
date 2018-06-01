@@ -1,31 +1,47 @@
-const _ = require('underscore');
+const _ = require("underscore");
 const getMovesMemo = {
   _counter: 0,
   counter: 0,
-  reset: () => this.counter = 0,
-  tick: () => {this._counter++; return this.counter++}
-} ;
+  reset: () => (this.counter = 0),
+  tick: () => {
+    this._counter++;
+    return this.counter++;
+  }
+};
 
 function getMoves(piece, start) {
-  let signature = `${piece}_i=${start}`
+  let signature = `${piece}_i=${start}`;
 
   if (getMovesMemo[signature]) {
     return getMovesMemo[signature];
   }
 
   if (illegalTiles && _.contains(illegalTiles, start)) {
-    return []
+    return [];
   }
 
   let value;
   switch (piece) {
-    case 'pawn':   value = pawnMovements(start, w, h); break;
-    case 'rook':   value = rookMovements(start, w, h); break;
-    case 'knight': value = knightMovements(start, w, h); break;
-    case 'bishop': value = bishopMovements(start, w, h); break;
-    case 'queen':  value = queenMovements(start, w, h); break;
-    case 'king':   value = kingMovements(start, w, h); break;
-    default: value = [];
+    case "pawn":
+      value = pawnMovements(start, w, h);
+      break;
+    case "rook":
+      value = rookMovements(start, w, h);
+      break;
+    case "knight":
+      value = knightMovements(start, w, h);
+      break;
+    case "bishop":
+      value = bishopMovements(start, w, h);
+      break;
+    case "queen":
+      value = queenMovements(start, w, h);
+      break;
+    case "king":
+      value = kingMovements(start, w, h);
+      break;
+    default:
+      value = [];
   }
 
   if (illegalTiles) {
@@ -42,24 +58,23 @@ function getMoves(piece, start) {
 
 function pawnMovements(start, w, h) {
   let lastRow = w * h - w;
-  if (start < lastRow)
-    return [start + w];
+  if (start < lastRow) return [start + w];
   return [];
 }
 
 function rookMovements(start, w, h) {
   let startcol = start % w;
-  let vertical = _.range( startcol , startcol + (w * h), w)
-  let startrow = (start / w) | 0
-  let horizontal = _.range( startrow * w, (startrow * w) + w, 1)
+  let vertical = _.range(startcol, startcol + w * h, w);
+  let startrow = (start / w) | 0;
+  let horizontal = _.range(startrow * w, startrow * w + w, 1);
   return _.union(vertical, horizontal)
-    .filter(n=>n!==start)
-    .sort((a,b)=>a>b)
+    .filter(n => n !== start)
+    .sort((a, b) => a > b);
 }
 
 function knightMovements(start, w, h) {
   let column = start % w;
-  let row = Math.floor(start/w);
+  let row = Math.floor(start / w);
   let potential = {
     NNW: start - (2 * w + 1),
     NWW: start - (w + 2),
@@ -78,11 +93,11 @@ function knightMovements(start, w, h) {
     delete potential.NNW;
     delete potential.SSW;
   }
-  if (column > (w-1) - 2) {
+  if (column > w - 1 - 2) {
     delete potential.NEE;
     delete potential.SEE;
   }
-  if (column > (w-1) - 1) {
+  if (column > w - 1 - 1) {
     delete potential.NNE;
     delete potential.SSE;
   }
@@ -94,34 +109,32 @@ function knightMovements(start, w, h) {
     delete potential.NWW;
     delete potential.NEE;
   }
-  if (row > (h-1)-2) {
+  if (row > h - 1 - 2) {
     delete potential.SSW;
     delete potential.SSE;
   }
-  if (row > (h-1)-1) {
+  if (row > h - 1 - 1) {
     delete potential.SWW;
     delete potential.SEE;
   }
-  return _.values(potential).sort((a,b)=>a>b);
+  return _.values(potential).sort((a, b) => a > b);
 }
 
 function bishopMovements(start, w, h) {
   let startcol = start % w;
-  let westward = _.range(w).map(n=> start + (n-startcol) * (w+1) );
-  let eastward = _.range(w).map(n=> start - (n-startcol) * (w-1) );
+  let westward = _.range(w).map(n => start + (n - startcol) * (w + 1));
+  let eastward = _.range(w).map(n => start - (n - startcol) * (w - 1));
 
   return _.union(westward, eastward)
-    .filter(n => n >= 0 && n < w*h)
+    .filter(n => n >= 0 && n < w * h)
     .filter(n => n !== start)
-    .sort((a,b) => a > b)
+    .sort((a, b) => a > b);
 }
 
 function queenMovements(start, w, h) {
-  return _.union(
-    rookMovements(start, w, h),
-    bishopMovements(start, w, h)
-  )
-  .sort( (a,b) => a > b)
+  return _.union(rookMovements(start, w, h), bishopMovements(start, w, h)).sort(
+    (a, b) => a > b
+  );
 }
 
 function kingMovements(start, w, h) {
@@ -141,22 +154,24 @@ function kingMovements(start, w, h) {
   return _.filter(potential, function(n) {
     let nr = (n / w) | 0;
     let nc = n % w;
-    return true
-      && nc >= 0
-      && nc < w
-      && nc >= startcol - 1
-      && nc <= startcol + 1
-      && nr >= 0
-      && nr < h
-      && nr >= startrow - 1
-      && nr <= startrow + 1
+    return (
+      true &&
+      nc >= 0 &&
+      nc < w &&
+      nc >= startcol - 1 &&
+      nc <= startcol + 1 &&
+      nr >= 0 &&
+      nr < h &&
+      nr >= startrow - 1 &&
+      nr <= startrow + 1
+    );
   });
 }
 
-module.exports = function (width, height, m, illegal) {
+module.exports = function(width, height, m, illegal) {
   w = width;
   h = height;
   mapping = m;
-  illegalTiles = illegal
+  illegalTiles = illegal;
   return getMoves;
-}
+};
